@@ -1,0 +1,127 @@
+# pip install matplotlib
+import sys
+
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
+
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+
+class Dashboard(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Dashboard')
+        self.showMaximized()
+        self.setStyleSheet("background:#f2fafc;")
+        self.setWindowIcon(QIcon("Logo.png"))
+
+        # ==================Logo==================
+        logo = QLabel()
+        pixmap = QPixmap("logo.png")
+        logo.setPixmap(pixmap)
+        logo.setScaledContents(True)
+        logo.setFixedSize(150, 150)
+
+        title = QLabel("Dashboard")
+        title.setStyleSheet("font-size:18px; font-weight:bold;")
+
+        log_outbtn = QPushButton("Log Out")
+        log_outbtn.setStyleSheet("""
+        QPushButton {
+            background:#f72d2d;
+            font-weight:bold;
+            border-radius:15px;
+        }
+        QPushButton:hover {
+            background: #bd3e3e;
+            color:white;
+        }
+        QPushButton:pressed {
+            background: #fa8787;
+            color: #363433;
+        }
+        """)
+
+        # ==================Main layout==================
+        main_layout = QVBoxLayout()
+
+        # ----- HEADER -----
+        header_layout = QHBoxLayout()
+        header_layout.addWidget(logo)
+        header_layout.addWidget(title)
+        header_layout.addStretch()
+        header_layout.addWidget(log_outbtn)
+
+        header_cardT = QWidget()
+        header_cardT.setStyleSheet("""
+         background:#444;
+         color:white;
+         padding:15px;
+         border-radius:15px;
+        """)
+        header_cardT.setFixedHeight(150)
+        header_cardT.setLayout(header_layout)
+        main_layout.addWidget(header_cardT, 1)
+
+        # ----- BODY -----
+        body_layout = QVBoxLayout()
+
+        header_cardB = QWidget()
+        header_cardB.setStyleSheet("""
+             background:#635b5a;
+             color:white;
+             padding:15px;
+             border-radius:15px;
+            """)
+        header_cardB.setLayout(body_layout)
+        main_layout.addWidget(header_cardB, 2)
+
+        # ====== Add Bar Graph to Body ======
+        self.add_bar_chart(body_layout)
+
+        # Set main layout
+        self.setLayout(main_layout)
+
+    def add_bar_chart(self, layout):
+        # Sample data
+        data = {
+            "STEM": 40,
+            "HUMSS": 25,
+            "ABM": 20,
+            "GAS": 15
+        }
+
+        # Create matplotlib figure
+        figure = Figure(facecolor="#eee")
+        canvas = FigureCanvas(figure)
+        layout.addWidget(canvas)
+
+        # Plot bar graph
+        ax = figure.add_subplot(441)
+        labels = list(data.keys())
+        values = list(data.values())
+        colors = ['#4CAF50', '#2196F3', '#FFC107', '#F44336']
+
+        bars = ax.bar(labels, values, color=colors, edgecolor="#333", linewidth=1.5)
+
+        ax.set_title("Total Students per Strand", fontsize=14, fontweight='bold', color="#333")
+        ax.set_ylabel("Number of Students")
+        ax.set_facecolor("#eee")
+        ax.grid(True, axis='y', linestyle='-.', alpha=0.5)
+
+        # Add values on top of bars
+        for bar in bars:
+            height = bar.get_height()
+            print(bar.get_x())
+            ax.text(bar.get_x() + bar.get_width()/2, height + 0.5, str(height),
+                    ha='center', va='bottom', fontsize=10, fontweight='bold', color="#333")
+
+        canvas.draw()
+
+
+if __name__ == '__main__':
+    app = QApplication([])
+    w = Dashboard()
+    w.show()
+    sys.exit(app.exec())
