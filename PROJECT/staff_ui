@@ -1,0 +1,96 @@
+# pip install matplotlib
+import sys
+
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout, QScrollBar, \
+    QScrollArea
+
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+
+
+class Dashboard(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Dashboard')
+
+        self.setStyleSheet("background:#f2fafc;")
+        self.setWindowIcon(QIcon("Logo.png"))
+
+        # ==================Logo==================
+        logo = QLabel()
+        pixmap = QPixmap("logo.png")
+        logo.setPixmap(pixmap)
+        logo.setScaledContents(True)
+        logo.setFixedSize(150, 150)
+
+        title = QLabel("Dashboard")
+        title.setStyleSheet("font-size:18px; font-weight:bold;")
+
+        log_outbtn = QPushButton("Log Out")
+        log_outbtn.setStyleSheet("""
+        QPushButton {
+            background:#f72d2d;
+            font-weight:bold;
+            border-radius:15px;
+        }
+        QPushButton:hover {
+            background: #bd3e3e;
+            color:white;
+        }
+        QPushButton:pressed {
+            background: #fa8787;
+            color: #363433;
+        }
+        """)
+
+        # ==================Main layout==================
+        main_layout = QVBoxLayout()
+
+        # ----- HEADER -----
+        header_layout = QHBoxLayout()
+        header_layout.addWidget(logo)
+        header_layout.addWidget(title)
+        header_layout.addStretch()
+        header_layout.addWidget(log_outbtn)
+
+        header_cardT = QWidget()
+        header_cardT.setStyleSheet("""
+         background:#444;
+         color:white;
+         padding:15px;
+         border-radius:15px;
+        """)
+        header_cardT.setFixedHeight(150)
+        header_cardT.setLayout(header_layout)
+        main_layout.addWidget(header_cardT, 1)
+
+        # ----- BODY -----
+        body_layout = QHBoxLayout()
+
+        header_cardB = QWidget(body_layout)
+        header_cardB.setStyleSheet("""
+             background:#635b5a;
+             color:white;
+             padding:15px;
+             border-radius:15px;
+            """)
+        main_layout.addWidget(header_cardB, 2)
+
+        left_layout =
+
+
+        # Set main layout
+        self.setLayout(main_layout)
+        self.showMaximized()
+
+    def clicked(self, i):
+        print(f'its working at index {i + 1}...')
+
+
+if __name__ == '__main__':
+    app = QApplication([])
+    w = Dashboard()
+    w.show()
+    sys.exit(app.exec())
